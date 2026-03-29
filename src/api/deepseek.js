@@ -62,10 +62,10 @@ function getClient() {
 
 /**
  * Send a message to DeepSeek V3 and get a narrator response.
+ * Returns the response text plus full debug info (prompt sent, reasoning, raw response).
  *
  * @param {Array<{role: string, content: string}>} conversationHistory
- *   The full conversation so far (user + narrator messages).
- * @returns {Promise<string>} The narrator's response text.
+ * @returns {Promise<{text: string, debug: object}>}
  */
 export async function getNarratorResponse(conversationHistory) {
   const openai = getClient()
@@ -83,12 +83,25 @@ export async function getNarratorResponse(conversationHistory) {
     messages: apiMessages,
   })
 
-  const text = response.choices?.[0]?.message?.content
+  const choice = response.choices?.[0]
+  const text = choice?.message?.content
   if (!text) {
     throw new Error('DeepSeek returned an empty response')
   }
 
-  return text
+  // Extract reasoning/thinking content if present
+  const reasoning = choice?.message?.reasoning_content || null
+
+  const debug = {
+    promptSent: apiMessages,
+    reasoning,
+    responseContent: text,
+    model: response.model,
+    usage: response.usage || null,
+    finishReason: choice?.finish_reason || null,
+  }
+
+  return { text, debug }
 }
 
 export { SYSTEM_PROMPT }

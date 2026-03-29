@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
+import PromptInspector from './PromptInspector'
 import './ChatPanel.css'
 
 export default function ChatPanel({ messages, onSendMessage, isLoading }) {
   const [input, setInput] = useState('')
+  const [inspectingDebug, setInspectingDebug] = useState(null)
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
@@ -37,6 +39,14 @@ export default function ChatPanel({ messages, onSendMessage, isLoading }) {
               {msg.role === 'user' ? 'You' : 'Narrator'}
             </div>
             <div className="chat-message-text">{msg.content}</div>
+            {msg.role === 'narrator' && msg.debug && (
+              <button
+                className="inspect-btn"
+                onClick={() => setInspectingDebug(msg.debug)}
+              >
+                {msg.debug === 'setup' ? 'Setup' : 'View Prompt'}
+              </button>
+            )}
           </div>
         ))}
         {isLoading && (
@@ -69,6 +79,13 @@ export default function ChatPanel({ messages, onSendMessage, isLoading }) {
           {isLoading ? '...' : 'Send'}
         </button>
       </div>
+
+      {inspectingDebug && (
+        <PromptInspector
+          debug={inspectingDebug}
+          onClose={() => setInspectingDebug(null)}
+        />
+      )}
     </div>
   )
 }

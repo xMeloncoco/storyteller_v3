@@ -37,7 +37,8 @@ Inside, the office is small and cluttered. A desk lamp throws a yellow cone of l
 
 In the far corner, a young man freezes mid-motion near a filing cabinet, a folder half-pulled from a drawer. He glances at you, then at the woman, then back at you. His mouth opens, but nothing comes out.
 
-The rain taps against the window. The clock on the wall reads 11:47 PM.`
+The rain taps against the window. The clock on the wall reads 11:47 PM.`,
+  debug: 'setup',
 }
 
 function loadMessages() {
@@ -110,12 +111,13 @@ function App() {
     logger.log('Sending request to DeepSeek V3...')
 
     try {
-      const responseText = await getNarratorResponse(updatedMessages)
+      const { text, debug } = await getNarratorResponse(updatedMessages)
 
       const narratorMessage = {
         id: Date.now() + 1,
         role: 'narrator',
-        content: responseText,
+        content: text,
+        debug,
       }
       setMessages(prev => [...prev, narratorMessage])
       logger.success('Narrator response received from DeepSeek V3')
@@ -126,6 +128,7 @@ function App() {
         id: Date.now() + 1,
         role: 'narrator',
         content: `[Error: Could not get a response. ${err.message}]`,
+        debug: { error: err.message },
       }
       setMessages(prev => [...prev, errorMessage])
     } finally {
