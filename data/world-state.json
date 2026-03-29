@@ -1,0 +1,28 @@
+{
+  "turn": 0,
+  "location": "The Rusty Lantern Inn",
+  "time": "evening",
+  "characters": {
+    "player": {
+      "name": "Unnamed Adventurer",
+      "position": "main hall",
+      "status": "healthy"
+    },
+    "innkeeper": {
+      "name": "Marta",
+      "position": "behind the bar",
+      "mood": "friendly",
+      "knows": ["player just arrived"]
+    },
+    "stranger": {
+      "name": "Hooded Figure",
+      "position": "corner booth",
+      "mood": "watchful",
+      "knows": []
+    }
+  },
+  "flags": {
+    "quest_available": true,
+    "inn_door_locked": false
+  }
+}
