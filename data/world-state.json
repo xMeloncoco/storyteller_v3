@@ -1,28 +1,18 @@
 {
   "turn": 0,
-  "location": "The Rusty Lantern Inn",
-  "time": "evening",
-  "characters": {
-    "player": {
-      "name": "Unnamed Adventurer",
-      "position": "main hall",
-      "status": "healthy"
-    },
-    "innkeeper": {
-      "name": "Marta",
-      "position": "behind the bar",
-      "mood": "friendly",
-      "knows": ["player just arrived"]
-    },
-    "stranger": {
-      "name": "Hooded Figure",
-      "position": "corner booth",
-      "mood": "watchful",
-      "knows": []
-    }
+  "scene": "Detective agency, late evening, raining outside",
+  "characters_present": ["Sable", "Pell"],
+  "positions": {
+    "Sable": "seated at desk, far side of room",
+    "Pell": "standing near filing cabinet, left wall"
   },
-  "flags": {
-    "quest_available": true,
-    "inn_door_locked": false
+  "intentions": {
+    "Sable": "assess whether the client is worth her time",
+    "Pell": "stay out of the way, look busy"
+  },
+  "plot_flags": {},
+  "what_characters_know": {
+    "Sable": ["a client has walked in", "nothing else yet"],
+    "Pell": ["a client has walked in", "nothing else yet"]
   }
 }

@@ -9,40 +9,46 @@ import './App.css'
 
 const INITIAL_WORLD_STATE = {
   turn: 0,
-  location: "The Rusty Lantern Inn",
-  time: "evening",
-  characters: {
-    player: {
-      name: "Unnamed Adventurer",
-      position: "main hall",
-      status: "healthy"
-    },
-    innkeeper: {
-      name: "Marta",
-      position: "behind the bar",
-      mood: "friendly",
-      knows: ["player just arrived"]
-    },
-    stranger: {
-      name: "Hooded Figure",
-      position: "corner booth",
-      mood: "watchful",
-      knows: []
-    }
+  scene: "Detective agency, late evening, raining outside",
+  characters_present: ["Sable", "Pell"],
+  positions: {
+    Sable: "seated at desk, far side of room",
+    Pell: "standing near filing cabinet, left wall"
   },
-  flags: {
-    quest_available: true,
-    inn_door_locked: false
+  intentions: {
+    Sable: "assess whether the client is worth her time",
+    Pell: "stay out of the way, look busy"
+  },
+  plot_flags: {},
+  what_characters_know: {
+    Sable: ["a client has walked in", "nothing else yet"],
+    Pell: ["a client has walked in", "nothing else yet"]
   }
+}
+
+const OPENING_MESSAGE = {
+  id: 0,
+  role: 'narrator',
+  content: `The rain hasn't let up in three days. You find the address scrawled on a damp business card — third floor, end of the hall. The sign on the frosted glass reads "Sable & Associates," though the "Associates" looks like it was added later, in cheaper paint.
+
+You push the door open. The hinges groan.
+
+Inside, the office is small and cluttered. A desk lamp throws a yellow cone of light across stacks of folders. Behind the desk sits a woman — dark hair pulled back, sharp eyes that don't look up when you enter. She turns a page in the file she's reading as if you aren't there.
+
+In the far corner, a young man freezes mid-motion near a filing cabinet, a folder half-pulled from a drawer. He glances at you, then at the woman, then back at you. His mouth opens, but nothing comes out.
+
+The rain taps against the window. The clock on the wall reads 11:47 PM.`
 }
 
 function loadMessages() {
   try {
     const saved = localStorage.getItem('storyteller_messages')
-    return saved ? JSON.parse(saved) : []
-  } catch {
-    return []
-  }
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (parsed.length > 0) return parsed
+    }
+  } catch { /* fall through */ }
+  return [OPENING_MESSAGE]
 }
 
 function loadWorldState() {
@@ -127,6 +133,12 @@ function App() {
     }
   }
 
+  const handleClearHistory = () => {
+    setMessages([OPENING_MESSAGE])
+    setWorldState(INITIAL_WORLD_STATE)
+    logger.log('Chat history and world state cleared — scene reset')
+  }
+
   const openPanel = (panel) => {
     setActivePanel(activePanel === panel ? null : panel)
     setMenuOpen(false)
@@ -165,15 +177,8 @@ function App() {
             )}
           </div>
 
-          {messages.length > 0 && (
-            <button
-              className="clear-history-btn"
-              onClick={() => {
-                setMessages([])
-                setWorldState(INITIAL_WORLD_STATE)
-                logger.log('Chat history and world state cleared')
-              }}
-            >
+          {messages.length > 1 && (
+            <button className="clear-history-btn" onClick={handleClearHistory}>
               Clear History
             </button>
           )}
