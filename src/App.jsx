@@ -4,6 +4,7 @@ import LogPanel from './components/LogPanel'
 import WorldStatePanel from './components/WorldStatePanel'
 import SystemPromptPanel from './components/SystemPromptPanel'
 import { useLogger } from './hooks/useLogger'
+import { getNarratorResponse, SYSTEM_PROMPT } from './api/deepseek'
 import './App.css'
 
 const INITIAL_WORLD_STATE = {
@@ -35,26 +36,6 @@ const INITIAL_WORLD_STATE = {
   }
 }
 
-const HARDCODED_SYSTEM_PROMPT = `You are a narrator for an interactive story. Follow these rules strictly:
-
-NARRATOR RULES:
-- Never write the player character's actions, words, or thoughts
-- Only describe what the world and NPCs do in response to the player
-- Maintain consistent character personalities
-- Respect what each character knows — no metagaming
-- Keep descriptions vivid but concise (2-4 paragraphs)
-
-CURRENT SCENE:
-Location: The Rusty Lantern Inn
-Time: Evening
-Present: Marta (innkeeper, behind bar), Hooded Figure (corner booth)
-
-SCRATCHPAD — think through before responding:
-[ ] Who is present in the scene?
-[ ] What does each character want right now?
-[ ] What would each character naturally do in response?
-[ ] Does any character know something they shouldn't? If so, don't use it.`
-
 function loadMessages() {
   try {
     const saved = localStorage.getItem('storyteller_messages')
@@ -78,6 +59,7 @@ function App() {
   const [worldState, setWorldState] = useState(loadWorldState)
   const [activePanel, setActivePanel] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const menuRef = useRef(null)
   const logger = useLogger()
 
@@ -102,34 +84,46 @@ function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [menuOpen])
 
-  const handleSendMessage = (text) => {
+  const handleSendMessage = async (text) => {
     const userMessage = {
       id: Date.now(),
       role: 'user',
       content: text,
     }
-    setMessages(prev => [...prev, userMessage])
+
+    const updatedMessages = [...messages, userMessage]
+    setMessages(updatedMessages)
     logger.success(`Message sent: "${text.slice(0, 50)}${text.length > 50 ? '...' : ''}"`)
 
     // Update world state turn
     setWorldState(prev => ({ ...prev, turn: prev.turn + 1 }))
     logger.log(`World state updated — turn ${worldState.turn + 1}`)
 
-    // Simulate a narrator response (Phase 1 — no AI yet)
-    setTimeout(() => {
+    // Call DeepSeek API
+    setIsLoading(true)
+    logger.log('Sending request to DeepSeek V3...')
+
+    try {
+      const responseText = await getNarratorResponse(updatedMessages)
+
       const narratorMessage = {
         id: Date.now() + 1,
         role: 'narrator',
-        content: `[No AI connected yet — this is a placeholder response to: "${text}"]`,
+        content: responseText,
       }
       setMessages(prev => [...prev, narratorMessage])
-      logger.log('Narrator response generated (placeholder — no AI connected)')
-    }, 500)
+      logger.success('Narrator response received from DeepSeek V3')
+    } catch (err) {
+      logger.error(`DeepSeek API error: ${err.message}`)
 
-    // Simulate a fake error every 3rd message for testing
-    if ((messages.length / 2 + 1) % 3 === 0) {
-      logger.error(`Simulated error: DeepSeek API call failed (this is a test error for debugging)`)
-      logger.warn('Retry logic would trigger here in production')
+      const errorMessage = {
+        id: Date.now() + 1,
+        role: 'narrator',
+        content: `[Error: Could not get a response. ${err.message}]`,
+      }
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -187,7 +181,11 @@ function App() {
       </header>
 
       <main className="main-area">
-        <ChatPanel messages={messages} onSendMessage={handleSendMessage} />
+        <ChatPanel
+          messages={messages}
+          onSendMessage={handleSendMessage}
+          isLoading={isLoading}
+        />
 
         {activePanel === 'log' && (
           <div className="overlay-panel">
@@ -201,7 +199,7 @@ function App() {
         )}
         {activePanel === 'systemPrompt' && (
           <div className="overlay-panel">
-            <SystemPromptPanel systemPrompt={HARDCODED_SYSTEM_PROMPT} onClose={() => setActivePanel(null)} />
+            <SystemPromptPanel systemPrompt={SYSTEM_PROMPT} onClose={() => setActivePanel(null)} />
           </div>
         )}
       </main>

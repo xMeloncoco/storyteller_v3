@@ -1,17 +1,17 @@
 import { useState, useRef, useEffect } from 'react'
 import './ChatPanel.css'
 
-export default function ChatPanel({ messages, onSendMessage }) {
+export default function ChatPanel({ messages, onSendMessage, isLoading }) {
   const [input, setInput] = useState('')
   const messagesEndRef = useRef(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, isLoading])
 
   const handleSend = () => {
     const trimmed = input.trim()
-    if (!trimmed) return
+    if (!trimmed || isLoading) return
     onSendMessage(trimmed)
     setInput('')
   }
@@ -39,6 +39,16 @@ export default function ChatPanel({ messages, onSendMessage }) {
             <div className="chat-message-text">{msg.content}</div>
           </div>
         ))}
+        {isLoading && (
+          <div className="chat-message narrator">
+            <div className="chat-message-label">Narrator</div>
+            <div className="chat-typing">
+              <span className="dot"></span>
+              <span className="dot"></span>
+              <span className="dot"></span>
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
       <div className="chat-input-area">
@@ -47,11 +57,16 @@ export default function ChatPanel({ messages, onSendMessage }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="What do you do?"
+          placeholder={isLoading ? 'Waiting for narrator...' : 'What do you do?'}
           rows={2}
+          disabled={isLoading}
         />
-        <button className="chat-send-btn" onClick={handleSend} disabled={!input.trim()}>
-          Send
+        <button
+          className="chat-send-btn"
+          onClick={handleSend}
+          disabled={!input.trim() || isLoading}
+        >
+          {isLoading ? '...' : 'Send'}
         </button>
       </div>
     </div>
