@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ChatPanel from './components/ChatPanel'
 import LogPanel from './components/LogPanel'
 import WorldStatePanel from './components/WorldStatePanel'
@@ -55,10 +55,23 @@ SCRATCHPAD — think through before responding:
 [ ] What would each character naturally do in response?
 [ ] Does any character know something they shouldn't? If so, don't use it.`
 
+function loadMessages() {
+  try {
+    const saved = localStorage.getItem('storyteller_messages')
+    return saved ? JSON.parse(saved) : []
+  } catch {
+    return []
+  }
+}
+
 function App() {
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState(loadMessages)
   const [worldState] = useState(HARDCODED_WORLD_STATE)
   const logger = useLogger()
+
+  useEffect(() => {
+    localStorage.setItem('storyteller_messages', JSON.stringify(messages))
+  }, [messages])
 
   const handleSendMessage = (text) => {
     const userMessage = {
@@ -91,7 +104,20 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>AI Storyteller</h1>
-        <span className="turn-counter">Turn {Math.floor(messages.filter(m => m.role === 'user').length)}</span>
+        <div className="header-right">
+          <span className="turn-counter">Turn {messages.filter(m => m.role === 'user').length}</span>
+          {messages.length > 0 && (
+            <button
+              className="clear-history-btn"
+              onClick={() => {
+                setMessages([])
+                logger.log('Chat history cleared')
+              }}
+            >
+              Clear History
+            </button>
+          )}
+        </div>
       </header>
 
       <main className="main-area">

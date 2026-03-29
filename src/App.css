@@ -23,9 +23,31 @@
   letter-spacing: 1px;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .app-header .turn-counter {
   font-size: 13px;
   color: var(--text-muted);
+}
+
+.clear-history-btn {
+  font-size: 11px;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.clear-history-btn:hover {
+  color: var(--error);
+  border-color: var(--error);
 }
 
 .main-area {
