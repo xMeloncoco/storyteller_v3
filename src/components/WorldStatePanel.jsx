@@ -1,16 +1,13 @@
-import { useState } from 'react'
 import './WorldStatePanel.css'
 
-export default function WorldStatePanel({ worldState }) {
-  const [collapsed, setCollapsed] = useState(false)
-
+export default function WorldStatePanel({ worldState, onClose }) {
   return (
     <div className="panel world-state-panel">
-      <div className="panel-header" onClick={() => setCollapsed(!collapsed)}>
+      <div className="panel-header">
         <h2>World State</h2>
-        <span className={`toggle-icon ${collapsed ? 'collapsed' : ''}`}>&#9660;</span>
+        <button className="panel-close-btn" onClick={onClose}>&times;</button>
       </div>
-      <div className={`panel-body ${collapsed ? 'collapsed' : ''}`}>
+      <div className="panel-body">
         <pre className="json-display">
           {JSON.stringify(worldState, null, 2)}
         </pre>

@@ -1,16 +1,13 @@
-import { useState } from 'react'
 import './SystemPromptPanel.css'
 
-export default function SystemPromptPanel({ systemPrompt }) {
-  const [collapsed, setCollapsed] = useState(false)
-
+export default function SystemPromptPanel({ systemPrompt, onClose }) {
   return (
     <div className="panel system-prompt-panel">
-      <div className="panel-header" onClick={() => setCollapsed(!collapsed)}>
+      <div className="panel-header">
         <h2>System Prompt</h2>
-        <span className={`toggle-icon ${collapsed ? 'collapsed' : ''}`}>&#9660;</span>
+        <button className="panel-close-btn" onClick={onClose}>&times;</button>
       </div>
-      <div className={`panel-body ${collapsed ? 'collapsed' : ''}`}>
+      <div className="panel-body">
         <pre className="system-prompt-display">
           {systemPrompt}
         </pre>
