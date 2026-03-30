@@ -4,8 +4,10 @@ import LogPanel from './components/LogPanel'
 import WorldStatePanel from './components/WorldStatePanel'
 import SystemPromptPanel from './components/SystemPromptPanel'
 import { useLogger } from './hooks/useLogger'
-import { getNarratorResponse, SYSTEM_PROMPT } from './api/deepseek'
+import { getNarratorResponse, buildSystemPrompt } from './api/deepseek'
 import './App.css'
+
+const PLAYER_NAME = 'The Client'
 
 const INITIAL_WORLD_STATE = {
   turn: 0,
@@ -111,7 +113,7 @@ function App() {
     logger.log('Sending request to DeepSeek V3...')
 
     try {
-      const { text, debug } = await getNarratorResponse(updatedMessages)
+      const { text, debug } = await getNarratorResponse(updatedMessages, PLAYER_NAME)
 
       const narratorMessage = {
         id: Date.now() + 1,
@@ -207,7 +209,7 @@ function App() {
         )}
         {activePanel === 'systemPrompt' && (
           <div className="overlay-panel">
-            <SystemPromptPanel systemPrompt={SYSTEM_PROMPT} onClose={() => setActivePanel(null)} />
+            <SystemPromptPanel systemPrompt={buildSystemPrompt(PLAYER_NAME)} onClose={() => setActivePanel(null)} />
           </div>
         )}
       </main>
