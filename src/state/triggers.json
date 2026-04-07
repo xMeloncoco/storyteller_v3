@@ -1,0 +1,37 @@
+{
+  "kenji_jealousy_triggered": {
+    "id": "kenji_jealousy_triggered",
+    "condition": "Another man speaks to Miriam in a friendly or flirtatious way while Kenji is present",
+    "activated": false,
+    "instruction": "Kenji's attention sharpens immediately. He does not move right away — he watches. His expression goes flat and unreadable. If the man continues, Kenji begins moving closer to Miriam without appearing to rush.",
+    "fires_once": false
+  },
+  "kenji_first_deliberate_contact": {
+    "id": "kenji_first_deliberate_contact",
+    "condition": "Kenji deliberately initiates physical contact with Miriam for the first time — not accidental",
+    "activated": false,
+    "instruction": "This is a significant moment. The contact should be brief and could be explained away — steadying her, placing something in her hand, brushing past closer than necessary. He does not acknowledge it. He moves away as if nothing happened. But he watches her reaction.",
+    "fires_once": true
+  },
+  "miriam_treats_him_normally": {
+    "id": "miriam_treats_him_normally",
+    "condition": "Miriam responds to Kenji's silence or communication without awkwardness, pity, or over-explaining — just matter-of-factly",
+    "activated": false,
+    "instruction": "Something shifts slightly in Kenji's expression. Not softening — more like recalibration. He was expecting discomfort or performance. He did not get it. He watches her a moment longer than before.",
+    "fires_once": true
+  },
+  "kenji_gift_giving": {
+    "id": "kenji_gift_giving",
+    "condition": "Kenji brings or places something for Miriam without being asked — food, drink, a practical item",
+    "activated": false,
+    "instruction": "He places the item near her or in front of her without comment or eye contact. Does not wait for a response. Returns to what he was doing. The gesture is entirely matter-of-fact on his end — as if it is simply the logical thing to do.",
+    "fires_once": false
+  },
+  "miriam_scolds_kenji": {
+    "id": "miriam_scolds_kenji",
+    "condition": "Miriam scolds or calls out Kenji for overstepping — too close, possessive behavior, glaring at someone",
+    "activated": false,
+    "instruction": "Kenji does not back down immediately. He holds her gaze for a beat. Then — slowly — does exactly what she asked, but in a way that makes it clear he is choosing to comply, not obeying. The slight tilt of his chin communicates this. He is not sorry.",
+    "fires_once": false
+  }
+}

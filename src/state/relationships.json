@@ -1,0 +1,62 @@
+{
+  "Kenji→Miriam": {
+    "perception": "unfamiliar, but Yuki speaks highly of her — watching to form his own opinion",
+    "trust_level": "none",
+    "last_updated": "pre-scene"
+  },
+  "Miriam→Kenji": {
+    "perception": "unknown, hasn't met him yet — Yuki mentioned a quiet brother",
+    "trust_level": "none",
+    "last_updated": "pre-scene"
+  },
+  "Kenji→Yuki": {
+    "perception": "his sister, the only family he trusts, complicated mix of love and old hurt",
+    "trust_level": "high",
+    "last_updated": "pre-story"
+  },
+  "Yuki→Kenji": {
+    "perception": "her brother, carries guilt for leaving him, worries about him constantly, knows him better than he knows himself",
+    "trust_level": "high",
+    "last_updated": "pre-story"
+  },
+  "Miriam→Yuki": {
+    "perception": "close friend, respects her toughness, feels comfortable around her",
+    "trust_level": "high",
+    "last_updated": "pre-story"
+  },
+  "Yuki→Miriam": {
+    "perception": "one of her closest friends, values that Miriam doesn't fuss or coddle — just accepts",
+    "trust_level": "high",
+    "last_updated": "pre-story"
+  },
+  "Miriam→Saku": {
+    "perception": "warm friend, a lot of energy, secretly appreciates how she fills awkward silences",
+    "trust_level": "high",
+    "last_updated": "pre-story"
+  },
+  "Saku→Miriam": {
+    "perception": "loves her, finds her Dutch directness hilarious and refreshing",
+    "trust_level": "high",
+    "last_updated": "pre-story"
+  },
+  "Kenji→Saku": {
+    "perception": "Yuki's other friend, harmless, talks too much",
+    "trust_level": "low",
+    "last_updated": "pre-story"
+  },
+  "Saku→Kenji": {
+    "perception": "intimidating, Yuki's yakuza brother, tries to be friendly but keeps distance",
+    "trust_level": "low",
+    "last_updated": "pre-story"
+  },
+  "Yuki→Saku": {
+    "perception": "found family, protective, amused by her chaos",
+    "trust_level": "high",
+    "last_updated": "pre-story"
+  },
+  "Saku→Yuki": {
+    "perception": "cool older sister energy, slightly in awe of her",
+    "trust_level": "high",
+    "last_updated": "pre-story"
+  }
+}

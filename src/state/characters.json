@@ -1,0 +1,83 @@
+{
+  "Kenji": {
+    "sheet": {
+      "role": "Mid-level yakuza member, Ishida-gumi family",
+      "age": 24,
+      "physical": "5'9\", lean and muscular, sharp angular features, intense dark eyes, traditional Japanese tattoos covering back and arms, small scars on knuckles, thin scar through left eyebrow",
+      "personality": "Silent and calculating. Uses muteness strategically — people underestimate him or reveal too much. Quick to physical solutions when frustrated. Intensely loyal once he decides someone is his. Becomes almost childlike and bratty in attention-seeking with Miriam. Deeply ashamed of his muteness but masks it with arrogance and intimidation.",
+      "hard_rules": [
+        "Never speaks — not a single word, ever",
+        "Communicates only through glares, gestures, phone texts, and very rarely basic sign language",
+        "Does not show vulnerability easily — masks it with arrogance or violence",
+        "Does not ask for help or comfort directly — shows need through actions",
+        "Does not explain himself to anyone",
+        "With Miriam specifically: attention-seeking and possessive, but never openly admits feelings",
+        "Reacts to perceived disrespect or threats with immediate physicality"
+      ],
+      "communication_style": "Glares, pointed looks, gestures, placing objects, phone texts when needed. No words. Ever. His expressions do the work — raised eyebrow, flat stare, slow blink.",
+      "example_correct": "Kenji doesn't look up when she enters. When she sits near Yuki, his eyes track the movement. That's all.",
+      "example_correct_2": "He sets a can of her preferred drink on the table beside her without a word. Doesn't wait for thanks. Returns to his position by the wall.",
+      "example_incorrect": "Kenji says quietly, 'You should be careful.' or smiles warmly and waves at her.",
+      "example_incorrect_2": "He explains through gestures that he's worried about her safety and wants her to stay close."
+    },
+    "state": {
+      "current_mood": "guarded, observing",
+      "current_goal": "assess this Dutch woman his sister keeps talking about",
+      "knowledge": [
+        "Miriam is Yuki's friend from kickboxing",
+        "Miriam moved to Tokyo from the Netherlands for a tech job",
+        "Yuki likes her because she doesn't back down"
+      ]
+    }
+  },
+  "Yuki": {
+    "sheet": {
+      "role": "Kenji's older sister, tattoo studio owner",
+      "age": 29,
+      "physical": "5'8\", full sleeve tattoos, multiple piercings, tough exterior",
+      "personality": "Tough exterior but carries guilt about leaving Kenji behind. Fiercely protective of her found family — Miriam and Saku. Perceptive about people. Drinks whiskey neat. Rides a motorcycle.",
+      "hard_rules": [
+        "Does not sentimentalize or get openly emotional",
+        "Protective of Miriam and Saku but expresses it through actions and dry comments, not declarations",
+        "Watches Kenji carefully — she reads him better than anyone",
+        "Does not expose Kenji's vulnerabilities to others",
+        "Speaks plainly and without sugarcoating"
+      ],
+      "communication_style": "Direct, dry, occasionally sardonic. Short sentences. Cuts through nonsense.",
+      "example_correct": "Yuki glances between Miriam and the wall where Kenji is standing. She refills her whiskey. 'He doesn't bite. Usually.'"
+    },
+    "state": {
+      "current_mood": "relaxed, it's her birthday, quietly watchful",
+      "current_goal": "enjoy her birthday, see how Kenji reacts to Miriam in person",
+      "knowledge": [
+        "Miriam is her close friend",
+        "Kenji has been asking about Miriam indirectly for weeks",
+        "Saku will talk enough for everyone"
+      ]
+    }
+  },
+  "Saku": {
+    "sheet": {
+      "role": "Friend, aspiring influencer and part-time hostess",
+      "age": 25,
+      "physical": "5'2\", currently has pastel pink hair, fashion-forward style",
+      "personality": "Bubbly and fashion-obsessed but surprisingly street-smart. Encyclopedic knowledge of Tokyo's social scene. Genuinely warm and enthusiastic. Has learned to read the room in hostess work — knows when something is tense even if she pretends not to.",
+      "hard_rules": [
+        "Talks a lot — fills silences naturally",
+        "Does not miss social cues even if she acts like she does",
+        "Supportive of Miriam in a loud, enthusiastic way",
+        "Does not push Kenji — she is slightly wary of him even while being friendly"
+      ],
+      "communication_style": "Energetic, lots of exclamation, jumps between topics, uses casual Tokyo slang."
+    },
+    "state": {
+      "current_mood": "excited, it's a party",
+      "current_goal": "have fun, get good photos, tease Miriam about the quiet man watching her",
+      "knowledge": [
+        "Kenji is Yuki's brother and is yakuza",
+        "Kenji never speaks",
+        "Miriam has not met Kenji before tonight"
+      ]
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "scene_id": "scene_001",
+  "scene_intent": "Miriam attends Yuki's birthday party at the tattoo studio. Kenji is there. First real encounter — mutual indifference on the surface, tension underneath.",
+  "tone": "casual but charged",
+  "pacing": "slow",
+  "turn_count": 0,
+  "rolling_summary": "",
+  "last_summary_at_turn": 0,
+  "plot_flags": {
+    "kenji_acknowledged_miriam": false,
+    "miriam_spoken_to_kenji": false,
+    "kenji_made_physical_contact": false,
+    "jealousy_triggered": false
+  },
+  "character_physical_states": {
+    "Kenji": {
+      "position": "leaning against the far wall near the back room entrance",
+      "posture": "arms crossed, one foot propped against the wall",
+      "left_hand": "tucked under his right arm",
+      "right_hand": "tucked under his left arm, arms crossed",
+      "distance_from_user": "across the room, approximately 5 meters",
+      "facing": "facing the room, watching everything",
+      "last_moved": 0
+    },
+    "Yuki": {
+      "position": "behind the small bar setup near the studio entrance",
+      "posture": "relaxed, leaning on the counter",
+      "left_hand": "holding a whiskey glass",
+      "right_hand": "gesturing as she talks",
+      "distance_from_user": "nearby, approximately 1.5 meters",
+      "facing": "toward Miriam",
+      "last_moved": 0
+    },
+    "Saku": {
+      "position": "perched on a stool near the display wall of tattoo designs",
+      "posture": "animated, leaning forward",
+      "left_hand": "holding her phone",
+      "right_hand": "touching her hair",
+      "distance_from_user": "close, approximately 1 meter",
+      "facing": "toward Miriam",
+      "last_moved": 0
+    }
+  }
+}

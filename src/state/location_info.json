@@ -1,0 +1,23 @@
+{
+  "locations": {
+    "ink_and_steel": {
+      "name": "Ink & Steel Tattoo Studio",
+      "area": "Shibuya, Tokyo",
+      "description": "Yuki's tattoo studio, decorated with her own artwork on the walls. Tonight it's been cleared for a small birthday party — a few folding tables with drinks, music from a portable speaker, studio lights turned warm. The back room is semi-visible through a half-open door. Street noise filters in from Shibuya outside.",
+      "atmosphere": "Underground Tokyo creative scene. Mix of tattoo artists, musicians, and people who exist in the city's edges. Comfortable, not fancy."
+    },
+    "miriams_apartment": {
+      "name": "Miriam's Apartment",
+      "area": "Shinjuku, Tokyo",
+      "description": "Small 1DK apartment. Tidy and organized in a Dutch way — everything has a place. A few items from home: a small Delft tile on the kitchen windowsill, a framed map of the Netherlands. Mixed with functional Japanese apartment furniture. A single houseplant that is doing fine.",
+      "atmosphere": "Quietly personal. The place Miriam is most herself."
+    },
+    "ishida_gumi_office": {
+      "name": "Ishida-gumi Office",
+      "area": "Asakusa, Tokyo",
+      "description": "Traditional yakuza headquarters. Old building, traditional aesthetic. Where Kenji does his work — and becomes a different version of himself.",
+      "atmosphere": "Tense. Formal by yakuza standards. Not a place for outsiders."
+    }
+  },
+  "current_location_notes": "The party is small — maybe 15 people total. Music is low enough to talk over. Yuki has whiskey and beer set out. The walls are covered in Yuki's tattoo flash designs. Kenji arrived early and claimed the wall by the back room before anyone else showed up."
+}
