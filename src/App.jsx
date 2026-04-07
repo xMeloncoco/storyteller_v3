@@ -4,44 +4,10 @@ import LogPanel from './components/LogPanel'
 import WorldStatePanel from './components/WorldStatePanel'
 import SystemPromptPanel from './components/SystemPromptPanel'
 import { useLogger } from './hooks/useLogger'
-import { getNarratorResponse, buildSystemPrompt } from './api/deepseek'
+import { useStoryState } from './hooks/useStoryState'
+import { getNarratorResponse } from './api/deepseek'
+import { buildSystemPrompt } from './prompts/systemPrompt'
 import './App.css'
-
-const PLAYER_NAME = 'The Client'
-
-const INITIAL_WORLD_STATE = {
-  turn: 0,
-  scene: "Detective agency, late evening, raining outside",
-  characters_present: ["Sable", "Pell"],
-  positions: {
-    Sable: "seated at desk, far side of room",
-    Pell: "standing near filing cabinet, left wall"
-  },
-  intentions: {
-    Sable: "assess whether the client is worth her time",
-    Pell: "stay out of the way, look busy"
-  },
-  plot_flags: {},
-  what_characters_know: {
-    Sable: ["a client has walked in", "nothing else yet"],
-    Pell: ["a client has walked in", "nothing else yet"]
-  }
-}
-
-const OPENING_MESSAGE = {
-  id: 0,
-  role: 'narrator',
-  content: `The rain hasn't let up in three days. You find the address scrawled on a damp business card — third floor, end of the hall. The sign on the frosted glass reads "Sable & Associates," though the "Associates" looks like it was added later, in cheaper paint.
-
-You push the door open. The hinges groan.
-
-Inside, the office is small and cluttered. A desk lamp throws a yellow cone of light across stacks of folders. Behind the desk sits a woman — dark hair pulled back, sharp eyes that don't look up when you enter. She turns a page in the file she's reading as if you aren't there.
-
-In the far corner, a young man freezes mid-motion near a filing cabinet, a folder half-pulled from a drawer. He glances at you, then at the woman, then back at you. His mouth opens, but nothing comes out.
-
-The rain taps against the window. The clock on the wall reads 11:47 PM.`,
-  debug: 'setup',
-}
 
 function loadMessages() {
   try {
@@ -51,34 +17,22 @@ function loadMessages() {
       if (parsed.length > 0) return parsed
     }
   } catch { /* fall through */ }
-  return [OPENING_MESSAGE]
-}
-
-function loadWorldState() {
-  try {
-    const saved = localStorage.getItem('storyteller_world_state')
-    return saved ? JSON.parse(saved) : INITIAL_WORLD_STATE
-  } catch {
-    return INITIAL_WORLD_STATE
-  }
+  return []
 }
 
 function App() {
   const [messages, setMessages] = useState(loadMessages)
-  const [worldState, setWorldState] = useState(loadWorldState)
   const [activePanel, setActivePanel] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [currentPrompt, setCurrentPrompt] = useState('')
   const menuRef = useRef(null)
   const logger = useLogger()
+  const storyState = useStoryState()
 
   useEffect(() => {
     localStorage.setItem('storyteller_messages', JSON.stringify(messages))
   }, [messages])
-
-  useEffect(() => {
-    localStorage.setItem('storyteller_world_state', JSON.stringify(worldState))
-  }, [worldState])
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -93,6 +47,23 @@ function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [menuOpen])
 
+  // Build the current system prompt (for debug display and API calls)
+  const getSystemPrompt = (triggerInstructions = '', relevantMemories = []) => {
+    return buildSystemPrompt(
+      {
+        characters: storyState.characters,
+        relationships: storyState.relationships,
+        worldState: storyState.worldState,
+        sceneState: storyState.sceneState,
+        storySummary: storyState.storySummary,
+        locationInfo: storyState.locationInfo,
+        userName: storyState.userName,
+      },
+      triggerInstructions,
+      relevantMemories
+    )
+  }
+
   const handleSendMessage = async (text) => {
     const userMessage = {
       id: Date.now(),
@@ -104,21 +75,26 @@ function App() {
     setMessages(updatedMessages)
     logger.success(`Message sent: "${text.slice(0, 50)}${text.length > 50 ? '...' : ''}"`)
 
-    // Update world state turn
-    setWorldState(prev => ({ ...prev, turn: prev.turn + 1 }))
-    logger.log(`World state updated — turn ${worldState.turn + 1}`)
+    // Increment turn count
+    const newTurn = (storyState.sceneState.turn_count || 0) + 1
+    storyState.updateSceneState({ turn_count: newTurn })
+    logger.log(`Turn ${newTurn}`)
+
+    // Build system prompt
+    const systemPrompt = getSystemPrompt()
+    setCurrentPrompt(systemPrompt)
 
     // Call DeepSeek API
     setIsLoading(true)
     logger.log('Sending request to DeepSeek V3...')
 
     try {
-      const { text, debug } = await getNarratorResponse(updatedMessages, PLAYER_NAME)
+      const { text: responseText, debug } = await getNarratorResponse(updatedMessages, systemPrompt)
 
       const narratorMessage = {
         id: Date.now() + 1,
         role: 'narrator',
-        content: text,
+        content: responseText,
         debug,
       }
       setMessages(prev => [...prev, narratorMessage])
@@ -139,9 +115,10 @@ function App() {
   }
 
   const handleClearHistory = () => {
-    setMessages([OPENING_MESSAGE])
-    setWorldState(INITIAL_WORLD_STATE)
-    logger.log('Chat history and world state cleared — scene reset')
+    setMessages([])
+    storyState.resetToDefaults()
+    setCurrentPrompt('')
+    logger.log('Chat history and story state reset to defaults')
   }
 
   const openPanel = (panel) => {
@@ -150,13 +127,14 @@ function App() {
   }
 
   const errorCount = logger.logs.filter(l => l.level === 'error').length
+  const turnCount = storyState.sceneState.turn_count || 0
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>AI Storyteller</h1>
+        <h1>{storyState.storySummary.story_title || 'AI Storyteller'}</h1>
         <div className="header-right">
-          <span className="turn-counter">Turn {worldState.turn}</span>
+          <span className="turn-counter">Turn {turnCount}</span>
 
           <div className="debug-menu" ref={menuRef}>
             <button
@@ -182,7 +160,7 @@ function App() {
             )}
           </div>
 
-          {messages.length > 1 && (
+          {messages.length > 0 && (
             <button className="clear-history-btn" onClick={handleClearHistory}>
               Clear History
             </button>
@@ -204,12 +182,12 @@ function App() {
         )}
         {activePanel === 'worldState' && (
           <div className="overlay-panel">
-            <WorldStatePanel worldState={worldState} onClose={() => setActivePanel(null)} />
+            <WorldStatePanel worldState={storyState.worldState} onClose={() => setActivePanel(null)} />
           </div>
         )}
         {activePanel === 'systemPrompt' && (
           <div className="overlay-panel">
-            <SystemPromptPanel systemPrompt={buildSystemPrompt(PLAYER_NAME)} onClose={() => setActivePanel(null)} />
+            <SystemPromptPanel systemPrompt={currentPrompt || getSystemPrompt()} onClose={() => setActivePanel(null)} />
           </div>
         )}
       </main>
