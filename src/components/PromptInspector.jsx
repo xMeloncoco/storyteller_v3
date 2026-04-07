@@ -64,10 +64,31 @@ export default function PromptInspector({ debug, onClose }) {
             </div>
           )}
 
-          {hasPrompt && (
+          {debug?.backgroundContext?.length > 0 && (
             <div className="pi-section">
-              <div className="pi-section-label">AI Response</div>
-              <pre className="pi-code">{debug.responseContent}</pre>
+              <div className="pi-section-label">Background Context ({debug.backgroundContext.length} characters)</div>
+              {debug.backgroundContext.map((ctx, i) => (
+                <div key={i} className="pi-context-entry">
+                  <span className="pi-context-name">{ctx.character || 'Unknown'}</span>
+                  <span className="pi-context-detail">Mood: {ctx.mood || '—'}</span>
+                  <span className="pi-context-detail">Intent: {ctx.intention || '—'}</span>
+                  <span className="pi-context-detail">Will act: {ctx.will_act || '—'}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {debug?.worldBackground && (
+            <div className="pi-section">
+              <div className="pi-section-label">World Background</div>
+              <pre className="pi-code">{debug.worldBackground.events || JSON.stringify(debug.worldBackground, null, 2)}</pre>
+            </div>
+          )}
+
+          {debug?.rawResponse && (
+            <div className="pi-section">
+              <div className="pi-section-label">Raw AI Response</div>
+              <pre className="pi-code">{debug.rawResponse}</pre>
             </div>
           )}
 
