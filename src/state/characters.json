@@ -1,6 +1,27 @@
 {
-  "Kenji": {
+  "Miriam": {
+    "type": "user",
     "sheet": {
+      "name": "Miriam van der Berg",
+      "age": 27,
+      "physical": "5'6\", blonde hair usually in a low ponytail, grey-blue eyes, practical style — jeans, boots, leather jacket. Small tulip tattoo behind her left ear.",
+      "personality": "Practical, not easily impressed or intimidated, dry sense of humor. Treats dramatic situations matter-of-factly.",
+      "background": "Dutch software engineer living in Tokyo for three years. Speaks fluent Japanese."
+    },
+    "state": {
+      "current_mood": "curious, slightly out of her element",
+      "current_goal": "attend Yuki's birthday, meet the mysterious brother",
+      "knowledge": [
+        "Yuki has a younger brother who is yakuza",
+        "He apparently never speaks",
+        "Yuki has been oddly insistent she come tonight"
+      ]
+    }
+  },
+  "Kenji": {
+    "type": "main",
+    "sheet": {
+      "name": "Kenji Ishida",
       "role": "Mid-level yakuza member, Ishida-gumi family",
       "age": 24,
       "physical": "5'9\", lean and muscular, sharp angular features, intense dark eyes, traditional Japanese tattoos covering back and arms, small scars on knuckles, thin scar through left eyebrow",
@@ -31,7 +52,9 @@
     }
   },
   "Yuki": {
+    "type": "side",
     "sheet": {
+      "name": "Yuki Ishida",
       "role": "Kenji's older sister, tattoo studio owner",
       "age": 29,
       "physical": "5'8\", full sleeve tattoos, multiple piercings, tough exterior",
@@ -57,7 +80,9 @@
     }
   },
   "Saku": {
+    "type": "side",
     "sheet": {
+      "name": "Saku Tanabe",
       "role": "Friend, aspiring influencer and part-time hostess",
       "age": 25,
       "physical": "5'2\", currently has pastel pink hair, fashion-forward style",

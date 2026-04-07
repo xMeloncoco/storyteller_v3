@@ -131,14 +131,23 @@ export function useStoryState() {
   }, [])
 
   /**
-   * The userName comes from story_summary.user_character.name,
-   * falling back to a generic default.
+   * Derive user info from the character with type: "user" in characters.json.
+   * userName = first name (for use in prompts and UI).
+   * userFullName = full name from the sheet.
    */
-  const userName = state.storySummary?.user_character?.name || 'the Player'
+  const userCharEntry = Object.entries(state.characters).find(
+    ([, char]) => char.type === 'user'
+  )
+  const userCharKey = userCharEntry ? userCharEntry[0] : null
+  const userChar = userCharEntry ? userCharEntry[1] : null
+  const userFullName = userChar?.sheet?.name || userCharKey || 'the Player'
+  const userName = userFullName.split(' ')[0]
 
   return {
     ...state,
     userName,
+    userFullName,
+    userCharKey,
     updateWorldState,
     updateSceneState,
     updateCharacterState,
