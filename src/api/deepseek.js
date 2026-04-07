@@ -1,4 +1,5 @@
 import OpenAI from 'openai'
+import { parseNarratorResponse } from '../utils/parseNarratorResponse'
 
 let client = null
 
@@ -52,14 +53,19 @@ export async function getNarratorResponse(conversationHistory, systemPrompt) {
 
   const reasoning = choice?.message?.reasoning_content || null
 
+  // Parse the raw response into structured parts
+  const parsed = parseNarratorResponse(text)
+
   const debug = {
     promptSent: apiMessages,
     reasoning,
-    responseContent: text,
+    rawResponse: text,
+    backgroundContext: parsed.backgroundContext,
+    worldBackground: parsed.worldBackground,
     model: response.model,
     usage: response.usage || null,
     finishReason: choice?.finish_reason || null,
   }
 
-  return { text, debug }
+  return { text: parsed.narrativeText, parsed, debug }
 }
