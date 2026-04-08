@@ -1,4 +1,4 @@
-.prompt-inspector-backdrop {
+.pi-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
@@ -8,11 +8,11 @@
   justify-content: center;
 }
 
-.prompt-inspector {
+.pi-modal {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 10px;
-  width: 700px;
+  width: 800px;
   max-width: calc(100vw - 40px);
   max-height: calc(100vh - 80px);
   display: flex;
@@ -23,7 +23,7 @@
 .pi-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
   padding: 12px 16px;
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border);
@@ -37,6 +37,13 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   color: var(--text-secondary);
+  margin: 0;
+}
+
+.pi-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: auto;
 }
 
 .pi-close {
@@ -48,6 +55,7 @@
   padding: 0 4px;
   line-height: 1;
   transition: color 0.2s;
+  flex-shrink: 0;
 }
 
 .pi-close:hover {
@@ -60,41 +68,62 @@
   padding: 16px;
 }
 
-.pi-section {
-  margin-bottom: 20px;
-}
-
-.pi-section:last-child {
-  margin-bottom: 0;
-}
-
-.pi-section-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--accent);
-  margin-bottom: 8px;
-}
-
-.pi-setup-badge {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-}
-
 .pi-note {
   font-size: 13px;
   color: var(--text-muted);
   line-height: 1.5;
 }
 
+/* Collapsible sections */
+.pi-section {
+  margin-bottom: 12px;
+}
+
+.pi-section:last-child {
+  margin-bottom: 0;
+}
+
+.pi-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 8px 4px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.pi-toggle:hover .pi-section-label {
+  color: var(--text-primary);
+}
+
+.pi-arrow {
+  font-size: 10px;
+  color: var(--text-muted);
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+
+.pi-arrow.open {
+  transform: rotate(90deg);
+}
+
+.pi-section-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  transition: color 0.15s;
+}
+
+.pi-section-content {
+  margin-top: 8px;
+}
+
+/* Code block */
 .pi-code {
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 12px;
@@ -105,88 +134,14 @@
   white-space: pre-wrap;
   word-break: break-word;
   color: var(--text-secondary);
+  margin: 0;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .pi-code.pi-error {
   color: #ff8a80;
   border-left: 3px solid var(--error);
-}
-
-.pi-code.pi-reasoning {
-  color: #ffe082;
-  border-left: 3px solid var(--warning);
-}
-
-/* Prompt messages list */
-.pi-messages {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.pi-msg {
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-
-.pi-msg-role {
-  display: block;
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 6px 10px 2px;
-  color: var(--text-muted);
-}
-
-.pi-msg-system .pi-msg-role { color: var(--accent); }
-.pi-msg-user .pi-msg-role { color: var(--success); }
-.pi-msg-assistant .pi-msg-role { color: var(--info); }
-
-.pi-msg-content {
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  font-size: 11px;
-  line-height: 1.5;
-  padding: 4px 10px 10px;
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: var(--text-secondary);
-  margin: 0;
-}
-
-/* Meta info row */
-.pi-meta {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  font-size: 11px;
-  color: var(--text-muted);
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-
-/* Background context entries */
-.pi-context-entry {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 8px 10px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
-  margin-bottom: 4px;
-  font-size: 12px;
-  align-items: baseline;
-}
-
-.pi-context-name {
-  font-weight: 700;
-  color: var(--text-primary);
-  min-width: 80px;
-}
-
-.pi-context-detail {
-  color: var(--text-muted);
 }
 
 /* Button on narrator messages */
