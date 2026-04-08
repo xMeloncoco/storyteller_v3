@@ -64,9 +64,16 @@ export default function PromptInspector({ debug, onClose }) {
             </div>
           )}
 
+          {debug?.rawResponse && (
+            <div className="pi-section">
+              <div className="pi-section-label">AI Response (Full Output)</div>
+              <pre className="pi-code">{debug.rawResponse}</pre>
+            </div>
+          )}
+
           {debug?.backgroundContext?.length > 0 && (
             <div className="pi-section">
-              <div className="pi-section-label">Background Context ({debug.backgroundContext.length} characters)</div>
+              <div className="pi-section-label">Parsed — Background Context ({debug.backgroundContext.length} characters)</div>
               {debug.backgroundContext.map((ctx, i) => (
                 <div key={i} className="pi-context-entry">
                   <span className="pi-context-name">{ctx.character || 'Unknown'}</span>
@@ -80,15 +87,8 @@ export default function PromptInspector({ debug, onClose }) {
 
           {debug?.worldBackground && (
             <div className="pi-section">
-              <div className="pi-section-label">World Background</div>
+              <div className="pi-section-label">Parsed — World Background</div>
               <pre className="pi-code">{debug.worldBackground.events || JSON.stringify(debug.worldBackground, null, 2)}</pre>
-            </div>
-          )}
-
-          {debug?.rawResponse && (
-            <div className="pi-section">
-              <div className="pi-section-label">Raw AI Response</div>
-              <pre className="pi-code">{debug.rawResponse}</pre>
             </div>
           )}
 
