@@ -38,7 +38,7 @@ export default function ChatPanel({ messages, onSendMessage, isLoading }) {
             <div className="chat-message-label">
               {msg.role === 'user' ? 'You' : 'Narrator'}
             </div>
-            <div className="chat-message-text">{msg.content}</div>
+            <div className="chat-message-text">{msg.displayText || msg.content}</div>
             {msg.role === 'narrator' && msg.debug && (
               <button
                 className="inspect-btn"

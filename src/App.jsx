@@ -89,12 +89,13 @@ function App() {
     logger.log('Sending request to DeepSeek V3...')
 
     try {
-      const { text: responseText, debug } = await getNarratorResponse(updatedMessages, systemPrompt)
+      const { parsed, debug } = await getNarratorResponse(updatedMessages, systemPrompt)
 
       const narratorMessage = {
         id: Date.now() + 1,
         role: 'narrator',
-        content: responseText,
+        content: parsed.raw,
+        displayText: parsed.narrativeText,
         debug,
       }
       setMessages(prev => [...prev, narratorMessage])
