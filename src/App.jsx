@@ -3,36 +3,30 @@ import ChatPanel from './components/ChatPanel'
 import LogPanel from './components/LogPanel'
 import WorldStatePanel from './components/WorldStatePanel'
 import SystemPromptPanel from './components/SystemPromptPanel'
+import StorySelectScreen from './components/StorySelectScreen'
+import LoadingScreen from './components/LoadingScreen'
+import ErrorScreen from './components/ErrorScreen'
 import { useLogger } from './hooks/useLogger'
-import { useStoryState } from './hooks/useStoryState'
+import { usePlaythrough } from './hooks/usePlaythrough'
 import { getNarratorResponse } from './api/deepseek'
 import { buildSystemPrompt } from './prompts/systemPrompt'
 import './App.css'
 
-function loadMessages() {
-  try {
-    const saved = localStorage.getItem('storyteller_messages')
-    if (saved) {
-      const parsed = JSON.parse(saved)
-      if (parsed.length > 0) return parsed
-    }
-  } catch { /* fall through */ }
-  return []
-}
-
 function App() {
-  const [messages, setMessages] = useState(loadMessages)
+  // ── Screen navigation ──
+  const [screen, setScreen] = useState('select') // 'select' | 'chat'
+  const [activePlaythroughId, setActivePlaythroughId] = useState(null)
+
+  // ── Playthrough state (replaces useStoryState + localStorage messages) ──
+  const playthrough = usePlaythrough(activePlaythroughId)
+
+  // ── UI state ──
   const [activePanel, setActivePanel] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [currentPrompt, setCurrentPrompt] = useState('')
   const menuRef = useRef(null)
   const logger = useLogger()
-  const storyState = useStoryState()
-
-  useEffect(() => {
-    localStorage.setItem('storyteller_messages', JSON.stringify(messages))
-  }, [messages])
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -47,38 +41,59 @@ function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [menuOpen])
 
-  // Build the current system prompt (for debug display and API calls)
-  const getSystemPrompt = (triggerInstructions = '', relevantMemories = []) => {
-    return buildSystemPrompt(
-      {
-        characters: storyState.characters,
-        relationships: storyState.relationships,
-        worldState: storyState.worldState,
-        sceneState: storyState.sceneState,
-        storySummary: storyState.storySummary,
-        locationInfo: storyState.locationInfo,
-        userName: storyState.userName,
-      },
-      triggerInstructions,
-      relevantMemories
-    )
+  // ── Navigation handlers ──
+
+  const handleSelectPlaythrough = (playthroughId) => {
+    setActivePlaythroughId(playthroughId)
+    setScreen('chat')
+    setActivePanel(null)
+    setCurrentPrompt('')
+    logger.clearLogs()
   }
 
+  const handleBackToStories = () => {
+    setScreen('select')
+    setActivePlaythroughId(null)
+    setActivePanel(null)
+    setCurrentPrompt('')
+  }
+
+  // ── Prompt builder ──
+
+  const getSystemPrompt = (triggerInstructions = '', relevantMemories = []) => {
+    if (!playthrough.promptState) return ''
+    return buildSystemPrompt(playthrough.promptState, triggerInstructions, relevantMemories)
+  }
+
+  // ── Turn pipeline ──
+
   const handleSendMessage = async (text) => {
+    const sceneNumber = playthrough.sceneNumber
+    const newTurn = (playthrough.turnCount || 0) + 1
+
+    // Build the user message
     const userMessage = {
-      id: Date.now(),
       role: 'user',
       content: text,
+      sceneNumber,
+      turnNumber: newTurn,
     }
 
-    const updatedMessages = [...messages, userMessage]
-    setMessages(updatedMessages)
+    // Add to local state + Supabase
+    playthrough.addMessage(userMessage)
     logger.success(`Message sent: "${text.slice(0, 50)}${text.length > 50 ? '...' : ''}"`)
 
     // Increment turn count
-    const newTurn = (storyState.sceneState.turn_count || 0) + 1
-    storyState.updateSceneState({ turn_count: newTurn })
+    playthrough.updateSceneState({ turn_count: newTurn })
+    playthrough.updatePlaythrough({
+      total_turns: newTurn,
+      last_played_at: new Date().toISOString(),
+    })
     logger.log(`Turn ${newTurn}`)
+
+    // Build the messages array including the new user message
+    // (playthrough.messages won't include it yet due to async state update)
+    const messagesForApi = [...playthrough.messages, userMessage]
 
     // Build system prompt
     const systemPrompt = getSystemPrompt()
@@ -89,37 +104,32 @@ function App() {
     logger.log('Sending request to DeepSeek V3...')
 
     try {
-      const { parsed, debug } = await getNarratorResponse(updatedMessages, systemPrompt)
+      const { parsed, debug } = await getNarratorResponse(messagesForApi, systemPrompt)
 
-      const narratorMessage = {
-        id: Date.now() + 1,
+      playthrough.addMessage({
         role: 'narrator',
         content: parsed.raw,
         displayText: parsed.narrativeText,
+        sceneNumber,
+        turnNumber: newTurn,
+        backgroundContext: parsed.backgroundContext,
+        worldBackground: parsed.worldBackground,
         debug,
-      }
-      setMessages(prev => [...prev, narratorMessage])
+      })
       logger.success('Narrator response received from DeepSeek V3')
     } catch (err) {
       logger.error(`DeepSeek API error: ${err.message}`)
 
-      const errorMessage = {
-        id: Date.now() + 1,
+      playthrough.addMessage({
         role: 'narrator',
         content: `[Error: Could not get a response. ${err.message}]`,
+        sceneNumber,
+        turnNumber: newTurn,
         debug: { error: err.message },
-      }
-      setMessages(prev => [...prev, errorMessage])
+      })
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const handleClearHistory = () => {
-    setMessages([])
-    storyState.resetToDefaults()
-    setCurrentPrompt('')
-    logger.log('Chat history and story state reset to defaults')
   }
 
   const openPanel = (panel) => {
@@ -127,15 +137,37 @@ function App() {
     setMenuOpen(false)
   }
 
+  // ── Story Select Screen ──
+
+  if (screen === 'select') {
+    return <StorySelectScreen onSelectPlaythrough={handleSelectPlaythrough} />
+  }
+
+  // ── Loading / Error for playthrough data ──
+
+  if (playthrough.isLoading) {
+    return <LoadingScreen message="Loading story..." />
+  }
+
+  if (playthrough.error) {
+    return (
+      <ErrorScreen
+        error={playthrough.error}
+        onRetry={() => setActivePlaythroughId(activePlaythroughId)}
+      />
+    )
+  }
+
+  // ── Chat Screen ──
+
   const errorCount = logger.logs.filter(l => l.level === 'error').length
-  const turnCount = storyState.sceneState.turn_count || 0
 
   return (
     <div className="app">
       <header className="app-header">
-        <h1>{storyState.storySummary.story_title || 'AI Storyteller'}</h1>
+        <h1>{playthrough.storyTitle || 'AI Storyteller'}</h1>
         <div className="header-right">
-          <span className="turn-counter">Turn {turnCount}</span>
+          <span className="turn-counter">Turn {playthrough.turnCount || 0}</span>
 
           <div className="debug-menu" ref={menuRef}>
             <button
@@ -161,17 +193,15 @@ function App() {
             )}
           </div>
 
-          {messages.length > 0 && (
-            <button className="clear-history-btn" onClick={handleClearHistory}>
-              Clear History
-            </button>
-          )}
+          <button className="clear-history-btn" onClick={handleBackToStories}>
+            Back to Stories
+          </button>
         </div>
       </header>
 
       <main className="main-area">
         <ChatPanel
-          messages={messages}
+          messages={playthrough.messages}
           onSendMessage={handleSendMessage}
           isLoading={isLoading}
         />
@@ -183,12 +213,18 @@ function App() {
         )}
         {activePanel === 'worldState' && (
           <div className="overlay-panel">
-            <WorldStatePanel worldState={storyState.worldState} onClose={() => setActivePanel(null)} />
+            <WorldStatePanel
+              worldState={playthrough.promptState?.worldState || {}}
+              onClose={() => setActivePanel(null)}
+            />
           </div>
         )}
         {activePanel === 'systemPrompt' && (
           <div className="overlay-panel">
-            <SystemPromptPanel systemPrompt={currentPrompt || getSystemPrompt()} onClose={() => setActivePanel(null)} />
+            <SystemPromptPanel
+              systemPrompt={currentPrompt || getSystemPrompt()}
+              onClose={() => setActivePanel(null)}
+            />
           </div>
         )}
       </main>
